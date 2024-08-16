@@ -17,7 +17,9 @@ PHP Version Selection: Prompts for and installs a specific version of PHP with e
 #Installation
 
 Clone the repository:
-```javascriptgit clone https://github.com/syrian2012/post-install_booster.git```
+```javascript
+git clone https://github.com/syrian2012/post-install_booster.git```
+```
 
 Navigate to the script directory:
 ```cd post-install_booster```
