@@ -3,6 +3,9 @@
 ## Overview
 The Linux Post-Installation Booster script simplifies and accelerates the setup of a new Linux installation. It automates the installation of essential packages, system configurations, and offers customizable options to tailor your environment to your needs.
 
+## Important Note
+This script currently works only for Debian-based distributions and has been tested specifically on Debian 12. Support for other Linux distribution families will be added soon.
+
 ## Features
 System Update & Upgrade: Keeps your system packages up-to-date.
 Basic Tools Installation: Installs a set of essential utilities and tools.
