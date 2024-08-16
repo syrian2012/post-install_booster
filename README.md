@@ -18,22 +18,22 @@ PHP Version Selection: Prompts for and installs a specific version of PHP with e
 
 Clone the repository:
 ```javascript
-git clone https://github.com/syrian2012/post-install_booster.git```
+git clone https://github.com/syrian2012/post-install_booster.git
 ```
 
 Navigate to the script directory:
 ```javascript
-```cd post-install_booster```
+cd post-install_booster
 ```
 
 Make the script executable:
 ```javascript
-```chmod +x booster.sh```
+chmod +x booster.sh
 ```
 
 Run the script:
 ```javascript
-```./booster.sh```
+./booster.sh
 ```
 
 #Usage
