@@ -15,6 +15,7 @@ Docker Installation: Installs Docker and related container tools.
 PHP Version Selection: Prompts for and installs a specific version of PHP with extensions.
 
 #Installation
+
 Clone the repository:
 git clone https://github.com/syrian2012/post-install_booster.git
 
