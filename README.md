@@ -1,9 +1,9 @@
-##Linux Post-Installation Booster
+## Linux Post-Installation Booster
 
-#Overview
+# Overview
 The Linux Post-Installation Booster script simplifies and accelerates the setup of a new Linux installation. It automates the installation of essential packages, system configurations, and offers customizable options to tailor your environment to your needs.
 
-#Features
+# Features
 System Update & Upgrade: Keeps your system packages up-to-date.
 Basic Tools Installation: Installs a set of essential utilities and tools.
 Customizable Package Selection: Allows users to choose from a list of software and services to install.
@@ -14,7 +14,7 @@ VPN Tools: Options to set up WireGuard and OpenVPN servers.
 Docker Installation: Installs Docker and related container tools.
 PHP Version Selection: Prompts for and installs a specific version of PHP with extensions.
 
-#Installation
+# Installation
 
 Clone the repository:
 ```javascript
@@ -36,7 +36,7 @@ Run the script:
 ./booster.sh
 ```
 
-#Usage
+# Usage
 The script will prompt you to select applications and services you want to install via a checklist dialog.
 Follow the on-screen prompts to choose packages, configure settings, and complete the installation.
 After installation, you will be asked whether to reboot your system immediately.
@@ -50,15 +50,15 @@ VPN Tools: wireguard-server, openvpn-server.
 Container Tools: docker.
 SSH with fail2ban for security only Configure the SSH port during the installation process.
 
-#Troubleshooting
+# Troubleshooting
 Ensure you have an active internet connection for downloading packages.
 Check for any error messages during installation and refer to the script's output for troubleshooting.
 
-#Contributing
+# Contributing
 Contributions are welcome! Please fork the repository, make changes, and submit a pull request. For issues or feature requests, open a new issue on GitHub.
 
-#License
+# License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
-#enjoy with Love Mohammad Haidar.
+# enjoy with Love Mohammad Haidar.
 
