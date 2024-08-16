@@ -17,27 +17,17 @@ PHP Version Selection: Prompts for and installs a specific version of PHP with e
 #Installation
 
 Clone the repository:
-```javascript
-git clone https://github.com/syrian2012/post-install_booster.git
+```git clone https://github.com/syrian2012/post-install_booster.git```
 
 
 Navigate to the script directory:
-```javascript
-function test() {
-    console.log("cd post-install_booster");
-}
+```cd post-install_booster```
 
 Make the script executable:
-```javascript
-function test() {
-    console.log("chmod +x booster.sh");
-}
+```chmod +x booster.sh```
 
 Run the script:
-```javascript
-function test() {
-    console.log("./booster.sh");
-}
+```./booster.sh```
 
 #Usage
 The script will prompt you to select applications and services you want to install via a checklist dialog.
