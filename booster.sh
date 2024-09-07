@@ -201,6 +201,10 @@ install_docker() {
     apt-get update || echo "Failed to update package list for Docker"
 
     apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin || echo "Failed to install Docker"
+
+    #installing ctop
+    wget https://github.com/bcicen/ctop/releases/download/v0.7.1/ctop-0.7.1-linux-amd64  -O /usr/local/bin/ctop
+    chmod +x /usr/local/bin/ctop
 }
 
 # Function to install MariaDB Server, Client, and Backup
