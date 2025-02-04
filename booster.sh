@@ -8,7 +8,37 @@ apt update && apt upgrade -y && apt dist-upgrade -y || echo "Failed to update an
 
 # Install basic tools including whiptail and iptables
 echo "Installing basic tools..."
-apt install -y nohang gnupg2 tuned python3 htop bpytop nload git lsb-release apt-transport-https ca-certificates curl gnupg wget net-tools dnsutils syslog-ng bash-completion software-properties-common neofetch whiptail iptables nano || echo "Failed to install some basic tools"
+apt install -y nohang gnupg2 rclone tuned python3 ncdu bat fzf htop bpytop nload git lsb-release apt-transport-https ca-certificates curl gnupg wget net-tools dnsutils syslog-ng bash-completion software-properties-common neofetch whiptail iptables nano || echo "Failed to install some basic tools"
+
+# install icp
+echo "installing icp..."
+wget https://github.com/syrian2012/icp/releases/download/V1.1/icp_1_1.deb
+apt install -y ./icp_1_1.deb
+rm -rf icp_1_1.deb
+
+# Update bashrc file
+echo "alias ll='ls -l'
+
+HISTTIMEFORMAT='[%d.%m.%y] %T   '
+
+
+export PS1='[\A][\u@\H \W]\\$ '
+
+export EDITOR=nano
+
+export HISTSIZE=10000
+export HISTTIMEFORMAT
+
+" >> .bashrc
+
+cat <<EOF >> ~/.bashrc
+
+# FZF Configuration
+source /usr/share/fzf/shell/key-bindings.bash
+show_file_or_dir_preview="if [ -d {} ]; then ls {} | head -200; else bat -n --color=always --line-range :500 {}; fi"
+
+export FZF_CTRL_T_OPTS="--preview '\$show_file_or_dir_preview'"
+EOF
 
 # Function to install a package
 install_package() {
