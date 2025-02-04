@@ -12,7 +12,9 @@ dnf install epel-release -y && dnf update -y
 
 # Install basic tools including whiptail and iptables
 echo "Installing basic tools..."
-dnf install -y gnupg2 tuned htop btop nload git ncdu dnf-plugins-core curl gnupg wget net-tools dnsutils syslog-ng bash-completion software-properties-common neofetch whiptail nano || echo "Failed to install some basic tools"
+dnf install -y gnupg2 firewalld chronyd tuned htop btop nload git ncdu dnf-plugins-core curl gnupg wget net-tools dnsutils syslog-ng bash-completion software-properties-common neofetch whiptail nano || echo "Failed to install some basic tools"
+
+systemctl enable --now chronyd
 
 # install icp
 echo "installing icp..."
@@ -92,11 +94,25 @@ filter = sshd
 logpath = /var/log/secure
 maxretry = 3" > /etc/fail2ban/jail.local
 
-    # Restart SSHD and Fail2Ban to apply changes
-    systemctl restart ssh || echo "Failed to restart SSH"
-    systemctl restart fail2ban || echo "Failed to restart Fail2Ban"
+    #enabe firewalld service
+    systemctl enable --now firewalld || echo "Failed to enable firewalld"
+    
+    #enable ssh port on firewall
+    firewall-cmd --add-port=$ssh_port/tcp --permanent 
+    firewall-cmd --reload
+
+    #disable selinux
+    sed -i 's/^SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config
 
     echo "SSHD and Fail2Ban installed and configured with port $ssh_port."
+
+    echo "firewalld has been enabled and configured with port $ssh_port."
+
+    echo "selinux has been disabled you must reboot now"
+
+    echo "rebooting in 30 seconds"
+
+    sleep 30 && reboot 
 }
 
 install_mongodb() {
