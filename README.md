@@ -3,11 +3,8 @@
 ## Overview
 The Linux Post-Installation Booster script simplifies and accelerates the setup of a new Linux installation. It automates the installation of essential packages, system configurations, and offers customizable options to tailor your environment to your needs.
 
-## Important Note
-This script currently works only for Debian-based distributions and has been tested specifically on Debian 12. Support for other Linux distribution families will be added soon.
-
 ## Features
-System Update & Upgrade: Keeps your system packages up-to-date.
+System Update: Keeps your system packages up-to-date.
 Basic Tools Installation: Installs a set of essential utilities and tools.
 Customizable Package Selection: Allows users to choose from a list of software and services to install.
 Service Configuration: Configures and enables services such as SSH, Fail2Ban, MongoDB, and more.
@@ -44,8 +41,8 @@ The script will prompt you to select applications and services you want to insta
 Follow the on-screen prompts to choose packages, configure settings, and complete the installation.
 After installation, you will be asked whether to reboot your system immediately.
 Available Options
-Basic Tools: Includes utilities like nohang, gnupg2, tuned, python3, htop, and more.
-Web Servers: Options for nginx, apache2.
+Basic Tools: Includes utilities like gnupg2, tuned, python3, htop, and more.
+Web Servers: Options for nginx, httpd.
 Programming Tools: php, nodejs golang, ruby, rustc, default-jdk.
 Development Tools: composer, yarn.
 Database Servers: postgresql, mariadb, mssql-server, mongodb, redis.
