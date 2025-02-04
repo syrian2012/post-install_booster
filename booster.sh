@@ -14,6 +14,36 @@ dnf install epel-release -y && dnf update -y
 echo "Installing basic tools..."
 dnf install -y gnupg2 tuned htop btop nload git ncdu dnf-plugins-core curl gnupg wget net-tools dnsutils syslog-ng bash-completion software-properties-common neofetch whiptail nano || echo "Failed to install some basic tools"
 
+# install icp
+echo "installing icp..."
+wget https://github.com/syrian2012/icp/releases/download/V1.1/icp-1.1-1.el9.noarch.rpm
+dnf install -y ./icp-1.1-1.el9.noarch.rpm
+rm -rf icp-1.1-1.el9.noarch.rpm
+
+# Update bashrc file
+echo "alias ll='ls -l'
+
+HISTTIMEFORMAT='[%d.%m.%y] %T   '
+
+
+export PS1='[\A][\u@\H \W]\\$ '
+
+export EDITOR=nano
+
+export HISTSIZE=10000
+export HISTTIMEFORMAT
+
+" >> .bashrc
+
+cat <<EOF >> ~/.bashrc
+
+# FZF Configuration
+source /usr/share/fzf/shell/key-bindings.bash
+show_file_or_dir_preview="if [ -d {} ]; then ls {} | head -200; else bat -n --color=always --line-range :500 {}; fi"
+
+export FZF_CTRL_T_OPTS="--preview '\$show_file_or_dir_preview'"
+EOF
+
 # Function to install a package
 install_package() {
     package=$1
