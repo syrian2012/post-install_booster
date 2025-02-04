@@ -2,23 +2,28 @@
 
 trap 'echo "An error occurred in the script."' ERR
 
-# Update & Upgrade the system
-echo "Updating and upgrading the system..."
-apt update && apt upgrade -y && apt dist-upgrade -y || echo "Failed to update and upgrade the system"
+# Update the system
+echo "Updating the system..."
+dnf update -y || echo "Failed to update the system"
+
+# Install basic tools including whiptail and iptables
+echo "Installing epel repo..."
+dnf install epel-release -y && dnf update -y
 
 # Install basic tools including whiptail and iptables
 echo "Installing basic tools..."
-apt install -y nohang gnupg2 tuned python3 htop bpytop nload git lsb-release apt-transport-https ca-certificates curl gnupg wget net-tools dnsutils syslog-ng bash-completion software-properties-common neofetch whiptail iptables nano || echo "Failed to install some basic tools"
+dnf install -y gnupg2 tuned htop btop nload git ncdu dnf-plugins-core curl gnupg wget net-tools dnsutils syslog-ng bash-completion software-properties-common neofetch whiptail nano || echo "Failed to install some basic tools"
 
 # Function to install a package
 install_package() {
     package=$1
-    if ! dpkg -l | grep -q "^ii  $package "; then
+    if ! rpm -q "$package" &>/dev/null; then
         echo "Installing $package..."
-        apt install -y "$package" || { echo "Failed to install $package"; return 1; }
+        dnf install -y "$package" || { echo "Failed to install $package"; return 1; }
     else
         echo "$package is already installed."
     fi
+}
 
     # Enable the service if it's available
     if systemctl list-unit-files | grep -q "${package}.service"; then
@@ -54,7 +59,7 @@ chain = INPUT
 enabled = true
 port = $ssh_port
 filter = sshd
-logpath = /var/log/auth.log
+logpath = /var/log/secure
 maxretry = 3" > /etc/fail2ban/jail.local
 
     # Restart SSHD and Fail2Ban to apply changes
@@ -64,14 +69,31 @@ maxretry = 3" > /etc/fail2ban/jail.local
     echo "SSHD and Fail2Ban installed and configured with port $ssh_port."
 }
 
-# Function to install MongoDB
 install_mongodb() {
     echo "Installing MongoDB..."
-    curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | gpg -o /usr/share/keyrings/mongodb-server-7.0.gpg --dearmor || echo "Failed to add MongoDB GPG key"
-    echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bookworm/mongodb-org/7.0 main" | tee /etc/apt/sources.list.d/mongodb-org-7.0.list || echo "Failed to add MongoDB repository"
-    apt update || echo "Failed to update package list for MongoDB"
-    apt install -y mongodb-org || echo "Failed to install MongoDB"
-    systemctl enable --now mongod || echo "Failed to enable MongoDB service"
+
+    # Add MongoDB repository
+    cat > /etc/yum.repos.d/mongodb-org-7.0.repo <<EOF
+[mongodb-org-7.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/7.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-7.0.asc
+EOF
+
+    if [ $? -ne 0 ]; then
+        echo "Failed to add MongoDB repository"
+        return 1
+    fi
+
+    # Install MongoDB
+    dnf install -y mongodb-org || { echo "Failed to install MongoDB"; return 1; }
+
+    # Enable and start MongoDB service
+    systemctl enable --now mongod || { echo "Failed to enable MongoDB service"; return 1; }
+
+    echo "MongoDB installation completed successfully."
 }
 
 # Function to install Composer
@@ -120,19 +142,24 @@ install_yarn() {
 # Function to install Node.js
 install_nodejs() {
     echo "Installing Node.js..."
-    curl -fsSL https://deb.nodesource.com/setup_current.x | bash - || echo "Failed to add Node.js repository"
-    apt update && apt install -y nodejs || echo "Failed to install Node.js"
+    curl -fsSL https://rpm.nodesource.com/setup_current.x | bash - || { echo "Failed to add Node.js repository"; return 1; }
+    dnf install -y nodejs || { echo "Failed to install Node.js"; return 1; }
 }
 
 # Function to install MSSQL Server
 install_mssql_server() {
     echo "Installing MSSQL Server..."
-    wget -q -O- https://packages.microsoft.com/keys/microsoft.asc | \
-    gpg --dearmor | tee /usr/share/keyrings/microsoft.gpg > /dev/null 2>&1
-    echo "deb [signed-by=/usr/share/keyrings/microsoft.gpg arch=amd64,armhf,arm64] https://packages.microsoft.com/ubuntu/22.04/mssql-server-2022 jammy main" | \
-    tee /etc/apt/sources.list.d/mssql-server-2022.list
-    apt update && apt install -y mssql-server
-    systemctl enable mssql-server
+    
+    # Add Microsoft repository
+    curl -o /etc/yum.repos.d/mssql-server.repo https://packages.microsoft.com/config/rhel/8/mssql-server-2022.repo || { echo "Failed to add MSSQL repository"; return 1; }
+
+    # Install MSSQL Server
+    dnf install -y mssql-server || { echo "Failed to install MSSQL Server"; return 1; }
+
+    # Enable and start MSSQL Server
+    systemctl enable --now mssql-server || { echo "Failed to enable MSSQL Server"; return 1; }
+
+    # Run MSSQL configuration setup
     /opt/mssql/bin/mssql-conf setup
 }
 
@@ -152,11 +179,9 @@ install_openvpn_server() {
     ./openvpn-install.sh || echo "Failed to execute OpenVPN installation script"
 }
 
-# Function to install PHP
 install_php() {
-
-    echo "deb https://packages.sury.org/php/ bookworm main" > /etc/apt/sources.list.d/php.list && \
-    wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+    # Enable EPEL and Remi repositories for PHP
+    dnf install -y https://rpms.remirepo.net/enterprise/remi-release-8.rpm || { echo "Failed to add Remi repository"; return 1; }
 
     # Prompt the user for the PHP version
     read -p "Enter the PHP version you want to install (e.g., 8.1): " php_version
@@ -167,56 +192,49 @@ install_php() {
         exit 1
     fi
 
+    # Enable the specific PHP module
+    dnf module reset php -y
+    dnf module enable php:remi-$php_version -y || { echo "Failed to enable PHP $php_version module"; return 1; }
+
     # Install PHP and necessary extensions
     echo "Installing PHP $php_version..."
-    apt-get update && apt-get install -y php$php_version php$php_version-fpm php$php_version-dev php$php_version-mysqlnd \
-    php$php_version-bcmath php$php_version-enchant php$php_version-gmp php$php_version-igbinary php$php_version-imagick \
-    php$php_version-intl php$php_version-mbstring php$php_version-mcrypt php$php_version-memcache php$php_version-memcached \
-    php$php_version-mysql php$php_version-pdo-dblib php$php_version-redis php$php_version-snmp php$php_version-soap \
-    php$php_version-tidy php$php_version-xml php$php_version-opcache php$php_version-curl php$php_version-bz2 \
-    php$php_version-zip php$php_version-gd php$php_version-xmlrpc || echo "Failed to install PHP $php_version"
+    dnf install -y php php-fpm php-devel php-mysqlnd php-bcmath php-enchant php-gmp php-pecl-igbinary php-pecl-imagick \
+    php-intl php-mbstring php-mcrypt php-pecl-memcache php-pecl-memcached php-pdo php-pecl-redis php-snmp php-soap \
+    php-tidy php-xml php-opcache php-curl php-bz2 php-zip php-gd php-xmlrpc || { echo "Failed to install PHP $php_version"; return 1; }
 
     # Verify installation
     echo "PHP $php_version and its extensions have been installed."
 }
 
+
 # Function to install Docker
 install_docker() {
     echo "Installing Docker..."
-    for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do apt remove $pkg; done || echo "Failed to remove old Docker packages"
 
-    # Create the directory for storing Docker's GPG key
-    install -m 0755 -d /etc/apt/keyrings || echo "Failed to create directory for Docker GPG key"
-
-    # Add Docker's official GPG key
-    curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc || echo "Failed to add Docker GPG key"
-
-    # Set appropriate permissions for the key
-    chmod a+r /etc/apt/keyrings/docker.asc || echo "Failed to set permissions for Docker GPG key"
-
-    # Add the Docker repository to Apt sources
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list || echo "Failed to add Docker repository"
-
-    # Update the package list again to include Docker packages
-    apt-get update || echo "Failed to update package list for Docker"
-
-    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin || echo "Failed to install Docker"
+    # Add the Docker repository
+    dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  
+    # installing docker packages
+    dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
     #installing ctop
     wget https://github.com/bcicen/ctop/releases/download/v0.7.1/ctop-0.7.1-linux-amd64  -O /usr/local/bin/ctop
     chmod +x /usr/local/bin/ctop
+
+    #installing lazydocker
+    curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
 }
 
 # Function to install MariaDB Server, Client, and Backup
 install_mariadb() {
     echo "Installing MariaDB Server, Client, and Backup..."
     install_package mariadb-server
-    install_package mariadb-client
+    install_package mariadb
     install_package mariadb-backup
 }
 
 # Define available apps
-web_servers=("nginx" "apache2" "golang" "ruby" "rustc" "default-jdk")
+web_servers=("nginx" "httpd" "golang" "ruby" "rustc" "default-jdk")
 programming_tools=("php" "nodejs")
 development_tools=("composer" "yarn")
 database_servers=("postgresql" "mariadb" "mssql-server" "mongodb" "redis")
