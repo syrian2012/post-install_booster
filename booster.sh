@@ -34,8 +34,8 @@ export HISTTIMEFORMAT
 cat <<EOF >> ~/.bashrc
 
 # FZF Configuration
-source /usr/share/fzf/shell/key-bindings.bash
-show_file_or_dir_preview="if [ -d {} ]; then ls {} | head -200; else bat -n --color=always --line-range :500 {}; fi"
+source /usr/share/doc/fzf/examples/key-bindings.bash
+show_file_or_dir_preview="if [ -d {} ]; then ls {} | head -200; else batcat -n --color=always --line-range :500 {}; fi"
 
 export FZF_CTRL_T_OPTS="--preview '\$show_file_or_dir_preview'"
 EOF
