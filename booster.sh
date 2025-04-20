@@ -40,7 +40,6 @@ show_file_or_dir_preview="if [ -d {} ]; then ls {} | head -200; else batcat -n -
 
 export FZF_CTRL_T_OPTS="--preview '\$show_file_or_dir_preview'"
 EOF
-}
 fi
 
 # Function to install a package
