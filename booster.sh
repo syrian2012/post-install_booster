@@ -6,13 +6,14 @@ trap 'echo "An error occurred in the script."' ERR
 echo "Updating the system..."
 dnf update -y || echo "Failed to update the system"
 
+if ! rpm -q "bat" &> /dev/null; then
 # Install basic tools including whiptail and iptables
 echo "Installing epel repo..."
 dnf install epel-release -y && dnf update -y
 
 # Install basic tools including whiptail and iptables
 echo "Installing basic tools..."
-dnf install -y gnupg2 firewalld chronyd tuned htop btop nload git ncdu dnf-plugins-core curl gnupg wget net-tools dnsutils syslog-ng bash-completion software-properties-common neofetch whiptail nano || echo "Failed to install some basic tools"
+dnf install -y gnupg2 firewalld chronyd tuned htop btop nload git ncdu dnf-plugins-core curl gnupg wget net-tools dnsutils syslog-ng bash-completion software-properties-common neofetch whiptail nano bat || echo "Failed to install some basic tools"
 
 systemctl enable --now chronyd
 
@@ -45,7 +46,7 @@ show_file_or_dir_preview="if [ -d {} ]; then ls {} | head -200; else bat -n --co
 
 export FZF_CTRL_T_OPTS="--preview '\$show_file_or_dir_preview'"
 EOF
-
+fi
 # Function to install a package
 install_package() {
     package=$1
