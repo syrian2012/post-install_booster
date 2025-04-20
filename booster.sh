@@ -238,6 +238,13 @@ install_docker() {
     #installing ctop
     wget https://github.com/bcicen/ctop/releases/download/v0.7.1/ctop-0.7.1-linux-amd64  -O /usr/local/bin/ctop
     chmod +x /usr/local/bin/ctop
+
+    # installing docker bash tools
+    git clone https://github.com/syrian2012/docker_bash_tools.git
+
+    cat docker_bash_tools/code_in_bashrc >> ~/.bashrc
+
+    rm -rf docker_bash_tools/
 }
 
 # Function to install MariaDB Server, Client, and Backup
