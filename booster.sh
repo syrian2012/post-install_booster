@@ -6,6 +6,7 @@ trap 'echo "An error occurred in the script."' ERR
 echo "Updating and upgrading the system..."
 apt update && apt upgrade -y && apt dist-upgrade -y || echo "Failed to update and upgrade the system"
 
+if ! dpkg -s "bat" &> /dev/null; then
 # Install basic tools including whiptail and iptables
 echo "Installing basic tools..."
 apt install -y nohang gnupg2 rclone tuned python3 ncdu bat fzf htop bpytop nload git lsb-release apt-transport-https ca-certificates curl gnupg wget net-tools dnsutils syslog-ng bash-completion software-properties-common neofetch whiptail iptables nano || echo "Failed to install some basic tools"
@@ -39,6 +40,8 @@ show_file_or_dir_preview="if [ -d {} ]; then ls {} | head -200; else batcat -n -
 
 export FZF_CTRL_T_OPTS="--preview '\$show_file_or_dir_preview'"
 EOF
+}
+fi
 
 # Function to install a package
 install_package() {
