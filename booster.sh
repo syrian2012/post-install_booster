@@ -13,7 +13,7 @@ dnf install epel-release -y && dnf update -y
 
 # Install basic tools including whiptail and iptables
 echo "Installing basic tools..."
-dnf install -y gnupg2 firewalld chronyd tuned htop btop nload git ncdu dnf-plugins-core curl gnupg wget net-tools dnsutils syslog-ng bash-completion software-properties-common neofetch whiptail nano bat || echo "Failed to install some basic tools"
+dnf install -y gnupg2 firewalld chrony tuned htop btop nload git ncdu dnf-plugins-core curl gnupg wget net-tools dnsutils syslog-ng bash-completion neofetch  nano bat || echo "Failed to install some basic tools"
 
 systemctl enable --now chronyd
 
@@ -47,6 +47,7 @@ show_file_or_dir_preview="if [ -d {} ]; then ls {} | head -200; else bat -n --co
 export FZF_CTRL_T_OPTS="--preview '\$show_file_or_dir_preview'"
 EOF
 fi
+
 # Function to install a package
 install_package() {
     package=$1
@@ -56,7 +57,6 @@ install_package() {
     else
         echo "$package is already installed."
     fi
-}
 
     # Enable the service if it's available
     if systemctl list-unit-files | grep -q "${package}.service"; then
