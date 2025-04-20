@@ -270,6 +270,13 @@ install_docker() {
 
     #installing lazydocker
     curl https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh | bash
+
+    # installing docker bash tools
+    git clone https://github.com/syrian2012/docker_bash_tools.git
+
+    cat docker_bash_tools/code_in_bashrc >> ~/.bashrc
+
+    rm -rf docker_bash_tools/ 
 }
 
 # Function to install MariaDB Server, Client, and Backup
