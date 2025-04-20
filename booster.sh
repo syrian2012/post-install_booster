@@ -259,10 +259,10 @@ install_docker() {
     echo "Installing Docker..."
 
     # Add the Docker repository
-    dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    dnf config-manager -y --add-repo https://download.docker.com/linux/centos/docker-ce.repo
   
     # installing docker packages
-    dnf install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
     #installing ctop
     wget https://github.com/bcicen/ctop/releases/download/v0.7.1/ctop-0.7.1-linux-amd64  -O /usr/local/bin/ctop
