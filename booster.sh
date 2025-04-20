@@ -66,7 +66,7 @@ install_package() {
 
 # Function to install SSHD with Fail2Ban
 install_sshd() {
-    install_package ssh
+    install_package openssh-server
     install_package fail2ban
 
     # Ask the user for the SSH port
