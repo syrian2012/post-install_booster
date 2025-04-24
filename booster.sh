@@ -13,9 +13,18 @@ dnf install epel-release -y && dnf update -y
 
 # Install basic tools including whiptail and iptables
 echo "Installing basic tools..."
-dnf install -y gnupg2 newt firewalld chrony tuned htop btop nload git ncdu dnf-plugins-core fzf curl gnupg wget net-tools dnsutils syslog-ng bash-completion neofetch nano bat || echo "Failed to install some basic tools"
+dnf install -y gnupg2 newt make firewalld chrony tuned htop btop nload git ncdu dnf-plugins-core fzf curl gnupg wget net-tools dnsutils syslog-ng bash-completion neofetch nano bat || echo "Failed to install some basic tools"
 
 systemctl enable --now chronyd
+
+# install nohang
+echo "installing nohang..."
+git clone https://github.com/hakavlad/nohang.git
+cd nohang
+sudo make install
+cd ..
+rm -rf nohang
+systemctl enable now nohang
 
 # install icp
 echo "installing icp..."
