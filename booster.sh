@@ -24,7 +24,7 @@ cd nohang
 sudo make install
 cd ..
 rm -rf nohang
-systemctl enable now nohang
+systemctl enable --now nohang
 
 # install icp
 echo "installing icp..."
