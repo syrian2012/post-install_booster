@@ -21,10 +21,10 @@ systemctl enable --now chronyd
 echo "installing nohang..."
 git clone https://github.com/hakavlad/nohang.git
 cd nohang
-sudo make install
+sudo make install || { echo "Failed to install nohang"; return 1; }
 cd ..
 rm -rf nohang
-systemctl enable --now nohang
+systemctl enable --now nohang || { echo "Failed to enable nohang service"; return 1; }
 
 # install icp
 echo "installing icp..."
@@ -285,7 +285,9 @@ install_docker() {
 
     cat docker_bash_tools/code_in_bashrc >> ~/.bashrc
 
-    rm -rf docker_bash_tools/ 
+    rm -rf docker_bash_tools/
+
+    systemctl enable --now docker || { echo "Failed to enable docker service"; return 1; }
 }
 
 # Function to install MariaDB Server, Client, and Backup
