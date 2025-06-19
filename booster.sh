@@ -37,26 +37,6 @@ echo "alias ll='ls -l'
 
 HISTTIMEFORMAT='[%d.%m.%y] %T   '
 
-memtop() {
-  ps -e -o rss=,args= |
-    awk '{ print $1 " " $2 }' |
-    awk '{
-      tot[$2] += $1
-      count[$2]++
-    }
-    END {
-      for (i in tot)
-        print tot[i], i, count[i]
-    }' |
-    sort -n |
-    tail -n 15 |
-    sort -nr |
-    awk '{
-      hr = $1/1024/1024
-      printf("%13.2fG\t%s\n", hr, $2)
-    }'
-}
-
 export PS1='[\A][\u@\H \W]\\$ '
 
 export EDITOR=nano
