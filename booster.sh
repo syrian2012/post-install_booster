@@ -22,7 +22,8 @@ echo "alias ll='ls -l'
 
 HISTTIMEFORMAT='[%d.%m.%y] %T   '
 
-export PS1='[\A][\u@\H \W]\\$ '
+export PS1='\[\e[01;32m\][\A]\[\e[0m\][\[\e[01;34m\]\u\[\e[0m\]@\[\e[38;5;214m\]\H\[\e[0m\] \[\e[01;35m\]\W\[\e[0m\]]\$ '
+
 
 export EDITOR=nano
 
